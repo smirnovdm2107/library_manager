@@ -34,6 +34,13 @@
             <artifactId>javafx-fxml</artifactId>
             <version>18.0.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.4.1</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -42,7 +49,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>Main</mainClass>
+                    <mainClass>com.example.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>

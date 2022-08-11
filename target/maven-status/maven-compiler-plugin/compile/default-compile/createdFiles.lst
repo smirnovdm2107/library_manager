@@ -1,4 +1,5 @@
-Main.class
-controllers/LoginMenuController.class
-controllers/MainMenuController.class
-controllers/SwitchSceneController.class
+com/example/User.class
+com/example/controllers/LoginMenuController.class
+com/example/controllers/MainMenuController.class
+com/example/db/DataBaseController.class
+com/example/Main.class

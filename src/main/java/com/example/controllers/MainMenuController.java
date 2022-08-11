@@ -1,4 +1,5 @@
-package controllers;
+package com.example.controllers;
 
 public class MainMenuController {
+
 }
