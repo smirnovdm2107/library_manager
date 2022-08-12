@@ -2,10 +2,7 @@ package com.example.db;
 
 import com.example.User;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DataBaseController {
     private final static String path = "jdbc:postgresql://localhost:5432/";
@@ -25,12 +22,19 @@ public class DataBaseController {
                         password
 
                 );
+                try(Statement statement = conn.createStatement()) {
+                    ResultSet resultSet = statement.executeQuery("SELECT datname FROM pg_database");
+                    String dbName = resultSet.getString("datname");
+
+                    while(resultSet.next()) {
+                        if (dbName.equals("library"))
+                    }
             } catch(SQLException e) {
-                System.out.print(e.getMessage());
+                System.out.println(e.getMessage());
                 throw new RuntimeException(e);
             }
         } catch (ClassNotFoundException e) {
-            System.out.print(e.getMessage());
+            System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -38,10 +42,10 @@ public class DataBaseController {
     public void addUser(User user) {
 
     }
-    public void checkOrCreateTable(String name) {
+    private void checkOrCreateTable(String tableName, String[] columns) {
         try(Statement statement = conn.createStatement()) {
-            statement.executeUpdate(String.format("IF OBJECT_ID('%s') IS NOT NULL\n" +
-                    "CREATE TABLE '%s'", name));
+            StringBuilder sb = new StringBuilder();
+            sb.append(String.format("CREATE TABLE IF NOT EXISTS %S(\n", tableName));
         }catch (SQLException e) {
             System.out.print(e.getMessage());
             throw new RuntimeException(e);

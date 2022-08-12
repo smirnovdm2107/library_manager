@@ -1,5 +1,6 @@
-com/example/User.class
-com/example/controllers/LoginMenuController.class
 com/example/controllers/MainMenuController.class
 com/example/db/DataBaseController.class
+com/example/controllers/RegisterMenuController.class
+com/example/User.class
+com/example/controllers/LoginMenuController.class
 com/example/Main.class

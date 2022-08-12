@@ -22,9 +22,7 @@ public class LoginMenuController {
     @FXML
     private Button logInButton;
     @FXML
-    private TextField nameField;
-    @FXML
-    private TextField surnameField;
+    private Button signInButton;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -46,7 +44,7 @@ public class LoginMenuController {
     }
 
     public void register(ActionEvent e) throws IOException {
-
+        setScene("/RegisterMenu.fxml", e);
     }
 
     private boolean checkEmptyFields(TextField... fields) {
@@ -67,7 +65,7 @@ public class LoginMenuController {
     }
 
     private void setScene(String path, ActionEvent e) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainMenu.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
         stage = (Stage)((Node) e.getSource()).getScene().getWindow();
         root = loader.load();
         scene = new Scene(root);

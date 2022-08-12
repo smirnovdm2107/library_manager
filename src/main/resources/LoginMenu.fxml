@@ -17,12 +17,10 @@
             <Image url="@pictures/closedDoor.png" />
          </image>
       </ImageView>
-      <Button fx:id="logInButtorn" layoutX="222.0" layoutY="335.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="77.0" text="log in" />
+      <Button fx:id="logInButton" layoutX="42.0" layoutY="335.0" mnemonicParsing="false" onAction="#login" prefHeight="27.0" prefWidth="77.0" text="log in" />
       <PasswordField fx:id="passwordField" layoutX="218.0" layoutY="272.0" promptText="Password" />
       <CheckBox layoutX="387.0" layoutY="276.0" mnemonicParsing="false" text="remember" />
       <TextField fx:id="loginField" layoutX="218.0" layoutY="232.0" promptText="Login" />
-      <Button fx:id="signInButton" layoutX="309.0" layoutY="334.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="77.0" text="sign in" />
-      <TextField id="nameField" layoutX="219.0" layoutY="154.0" promptText="Name" visible="false" />
-      <TextField id="surnameField" layoutX="218.0" layoutY="193.0" promptText="Surname" visible="false" />
+      <Button fx:id="signInButton" layoutX="309.0" layoutY="334.0" mnemonicParsing="false" onAction="#register" prefHeight="28.0" prefWidth="77.0" text="sign in" />
    </children>
 </AnchorPane>
