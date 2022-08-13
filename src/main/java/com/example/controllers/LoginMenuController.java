@@ -1,16 +1,21 @@
 package com.example.controllers;
 
+import com.example.User;
+import com.example.db.DataBaseController;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 
@@ -23,9 +28,9 @@ public class LoginMenuController {
     private Button logInButton;
     @FXML
     private Button signInButton;
-    private Stage stage;
-    private Scene scene;
-    private Parent root;
+    @FXML
+    private Label wrongDataLabel;
+
     public void login(ActionEvent e) throws IOException {
         String login = loginField.getText();
         String password = passwordField.getText();
@@ -38,6 +43,21 @@ public class LoginMenuController {
                 passwordField.setPromptText("Please enter password");
                 passwordField.setOnMouseClicked(event -> passwordField.setPromptText("Password"));
             }
+            return;
+        }
+        DataBaseController dataBaseController = new DataBaseController();
+        User user = dataBaseController.findUser(login, password);
+        if (user == null) {
+            loginField.setText("");
+            passwordField.setText("");
+            wrongDataLabel.setVisible(true);
+            /*
+            EventHandler<MouseEvent> eventHandler = event -> wrongDataLabel.setVisible(false);
+            loginField.setOnMouseClicked(eventHandler);
+            wrongDataLabel.setOnMouseClicked(eventHandler);
+
+            I don't know how to remove handler after the event:(
+            */
             return;
         }
         setScene("/MainMenu.fxml", e);
@@ -57,18 +77,15 @@ public class LoginMenuController {
                 field.setOnMouseClicked(event -> {
                     field.setPromptText(promptText);
                 });
-
-
             }
         }
         return isValid;
     }
-
-    private void setScene(String path, ActionEvent e) throws IOException {
+    private void setScene(String path, Event e) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-        stage = (Stage)((Node) e.getSource()).getScene().getWindow();
-        root = loader.load();
-        scene = new Scene(root);
+        Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
