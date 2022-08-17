@@ -1,12 +1,18 @@
 package com.example.controllers;
 
-import javafx.event.ActionEvent;
+import com.example.user.User;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-
-import java.util.Objects;
+import javafx.scene.control.Label;
 
 public class AccountMenuController {
+
+    @FXML
+    Label nameLabel;
+    public void setUser(User user) {
+        nameLabel.setText("This is your account, " + user.getName());
+    }
+
+
+
 
 }

@@ -10,13 +10,13 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.controllers.MainMenuController">
    <children>
-      <ImageView fitHeight="104.0" fitWidth="41.0" layoutX="536.0" layoutY="312.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="exitDoor" fitHeight="104.0" fitWidth="41.0" layoutX="536.0" layoutY="312.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@pictures/closedDoor.png" />
          </image>
       </ImageView>
-      <Button layoutX="430.0" layoutY="147.0" mnemonicParsing="false" text="Account" />
-      <Button layoutX="432.0" layoutY="246.0" mnemonicParsing="false" text="Log out" />
+      <Button fx:id="accountButton" layoutX="430.0" layoutY="147.0" mnemonicParsing="false" onAction="#switchToAccountScene" text="Account" />
+      <Button fx:id="logOutButton" layoutX="432.0" layoutY="246.0" mnemonicParsing="false" onAction="#logOut" text="Log out" />
       <TextField fx:id="bookSearchField" layoutX="42.0" layoutY="77.0" onAction="#searchBookOrAuthor" promptText="Enter book or author..." />
       <ListView fx:id="mainListView" fixedCellSize="30.0" layoutX="42.0" layoutY="104.0" prefHeight="210.0" prefWidth="377.0" />
       <Label fx:id="pageCountLabel" layoutX="214.0" layoutY="345.0" />

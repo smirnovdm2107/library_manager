@@ -1,6 +1,6 @@
 package com.example.controllers;
 
-import com.example.User;
+import com.example.user.User;
 import com.example.db.DataBaseController;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -12,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -51,7 +50,7 @@ public class RegisterMenuController {
         if (emptyFlag) {
             return;
         }
-        User user = new User(name, surname, login, password);
+        User user = new User(login, password, name, surname);
         DataBaseController dataBaseController = new DataBaseController();
         dataBaseController.addUser(user);
         if (logInCheckBox.isSelected()) {

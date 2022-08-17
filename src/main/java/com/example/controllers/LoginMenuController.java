@@ -1,10 +1,9 @@
 package com.example.controllers;
 
-import com.example.User;
+import com.example.user.User;
 import com.example.db.DataBaseController;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -14,10 +13,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class LoginMenuController {
     @FXML
@@ -47,6 +46,7 @@ public class LoginMenuController {
         }
         DataBaseController dataBaseController = new DataBaseController();
         User user = dataBaseController.findUser(login, password);
+        writeUser(user);
         if (user == null) {
             loginField.setText("");
             passwordField.setText("");
@@ -63,6 +63,23 @@ public class LoginMenuController {
         setScene("/MainMenu.fxml", e);
     }
 
+    private void writeUser(User user) {
+        try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("/user_info.txt"),
+                StandardCharsets.UTF_8
+        ))) {
+            String[] userDates = new String[]{
+                    user.getLogin(), user.getPassword(), user.getName(), user.getSurname()
+            };
+            for (String userDate : userDates) {
+                writer.write(userDate);
+            }
+        } catch (IOException e) {
+            System.out.println("problem with opening file: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+
+    }
     public void register(ActionEvent e) throws IOException {
         setScene("/RegisterMenu.fxml", e);
     }

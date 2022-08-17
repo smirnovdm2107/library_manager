@@ -1,12 +1,9 @@
 package com.example.db;
 
-import com.example.User;
-import javafx.scene.control.PasswordField;
+import com.example.user.User;
 
-import javax.print.DocFlavor;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
