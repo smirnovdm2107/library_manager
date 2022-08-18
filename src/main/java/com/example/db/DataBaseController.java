@@ -1,8 +1,13 @@
 package com.example.db;
 
 import com.example.User;
+import javafx.scene.control.PasswordField;
 
+import javax.print.DocFlavor;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class DataBaseController {
@@ -10,7 +15,7 @@ public class DataBaseController {
     private final static String password = "";
     private final static String user = "postgres";
 
-    private Connection conn;
+    private final Connection conn;
 
     public DataBaseController() {
 
@@ -33,6 +38,36 @@ public class DataBaseController {
         }
     }
 
+    public List<String> getBooksAndAuthors() {
+        List<String> results = new ArrayList<>();
+        try(Statement statement = conn.createStatement()) {
+            try(ResultSet resultBooks = statement.executeQuery(
+                    "SELECT title FROM books;");
+                ) {
+                while (resultBooks.next()) {
+                results.add(String.format(resultBooks.getString("title")));
+                }
+            } catch (SQLException e) {
+                System.out.println("problem with fetching books: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+            try(ResultSet resultAuthors = statement.executeQuery(
+                    "SELECT name, surname FROM authors;"
+            )) {
+                while (resultAuthors.next()) {
+                    results.add(String.format("%s %s",
+                            resultAuthors.getString("name"), resultAuthors.getString("surname")));
+                }
+            } catch (SQLException e) {
+                System.out.println("problem with fetching authors: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return results;
+    }
     public boolean addUser(User user) {
         Objects.requireNonNull(user);
         try(Statement statement = conn.createStatement()) {
@@ -90,11 +125,30 @@ public class DataBaseController {
                 );
                 try(Statement statement = connection.createStatement()) {
                     statement.executeUpdate("CREATE TABLE IF NOT EXISTS users (" +
-                            "user_id serial PRIMARY KEY, " +
+                            "user_id SERIAL PRIMARY KEY, " +
                             "name varchar(64) NOT NULL, " +
                             "surname varchar(64) NOT NULL, " +
                             "login varchar(64) UNIQUE NOT NULL, " +
                             "password varchar(64) NOT NULL" +
+                            ");");
+                    statement.executeUpdate("CREATE TABLE IF NOT EXISTS authors (" +
+                            "author_id SERIAL PRIMARY KEY, " +
+                            "name varchar(64)," +
+                            "surname varchar(64), " +
+                            "description text "+
+                            ");");
+                    statement.executeUpdate("CREATE TABLE IF NOT EXISTS books (" +
+                            "book_id SERIAL PRIMARY KEY, " +
+                            "title varchar(128) NOT NULL, " +
+                            "fk_author_id INT, " +
+                            "annotation text," +
+                            "FOREIGN KEY(fk_author_id) REFERENCES authors(author_id)" +
+                            ");");
+                    statement.executeUpdate("CREATE TABLE IF NOT EXISTS orders(" +
+                            "order_id SERIAL PRIMARY KEY, " +
+                            "book_id INT, " +
+                            "order_time TIMESTAMP, " +
+                            "order_type BOOLEAN " +
                             ");");
                 } catch (SQLException e) {
                     System.out.print(e.getMessage());

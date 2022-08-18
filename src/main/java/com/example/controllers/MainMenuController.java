@@ -1,12 +1,13 @@
 package com.example.controllers;
 
 import com.example.db.DataBaseController;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
-import java.util.Objects;
+import java.util.*;
 
 public class MainMenuController {
     @FXML
@@ -17,6 +18,18 @@ public class MainMenuController {
     public void searchBookOrAuthor(ActionEvent e) {
         String requestString = bookSearchField.getText();
         DataBaseController dataBaseController = new DataBaseController();
+        List<String> results = dataBaseController.getBooksAndAuthors();
+        results.sort((s1, s2) -> {
+            int res1 = findLevenshteinDistance(requestString, s1);
+            int res2 = findLevenshteinDistance(requestString, s2);
+            if (res1 > res2) {
+                return -1;
+            } else if (res1 < res2) {
+                return 1;
+            }
+            return 0;
+        });
+        mainListView.setItems(FXCollections.observableList(results));
     }
 
     private int findLevenshteinDistance(String a, String b) {

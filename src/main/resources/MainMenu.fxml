@@ -15,8 +15,8 @@
             <Image url="@pictures/closedDoor.png" />
          </image>
       </ImageView>
-      <Button layoutX="431.0" layoutY="101.0" mnemonicParsing="false" text="Account" />
-      <Button layoutX="433.0" layoutY="167.0" mnemonicParsing="false" text="Log out" />
+      <Button layoutX="430.0" layoutY="147.0" mnemonicParsing="false" text="Account" />
+      <Button layoutX="432.0" layoutY="246.0" mnemonicParsing="false" text="Log out" />
       <TextField fx:id="bookSearchField" layoutX="42.0" layoutY="77.0" onAction="#searchBookOrAuthor" promptText="Enter book or author..." />
       <ListView fx:id="mainListView" fixedCellSize="30.0" layoutX="42.0" layoutY="104.0" prefHeight="210.0" prefWidth="377.0" />
       <Label fx:id="pageCountLabel" layoutX="214.0" layoutY="345.0" />
