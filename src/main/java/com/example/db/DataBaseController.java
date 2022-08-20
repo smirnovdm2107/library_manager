@@ -1,6 +1,7 @@
 package com.example.db;
 
 import com.example.user.User;
+import com.example.user.UserOrder;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -97,10 +98,10 @@ public class DataBaseController {
                             "WHERE users.login='%s' AND users.password='%s';", login, password));
             if (resultSet.next()) {
                 resultUser = new User(
-                        resultSet.getString("name"),
-                        resultSet.getString("surname"),
                         resultSet.getString("login"),
-                        resultSet.getString("password")
+                        resultSet.getString("password"),
+                        resultSet.getString("name"),
+                        resultSet.getString("surname")
                 );
             }
         } catch (SQLException e) {
@@ -143,9 +144,12 @@ public class DataBaseController {
                             ");");
                     statement.executeUpdate("CREATE TABLE IF NOT EXISTS orders(" +
                             "order_id SERIAL PRIMARY KEY, " +
-                            "book_id INT, " +
+                            "fk_user_id INT, " +
+                            "fk_book_id INT, " +
                             "order_time TIMESTAMP, " +
-                            "order_type BOOLEAN " +
+                            "order_type BOOLEAN, " +
+                            "FOREIGN KEY(fk_user_id) REFERENCES users(user_id), " +
+                            "FOREIGN KEY(fk_book_id) REFERENCES books(book_id)" +
                             ");");
                 } catch (SQLException e) {
                     System.out.print(e.getMessage());
@@ -159,6 +163,26 @@ public class DataBaseController {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public UserOrder[] getUserOrders(User user) {
+        try(Statement statement = conn.createStatement()) {
+            try(ResultSet resultSet = statement.executeQuery(
+                    "SELECT order_id, fk_book_id, fk_user_id, order_time, order_type FROM orders " +
+                            "LEFT JOIN users " +
+                            "ON fk_user_id = users.user_id " +
+                            "LEFT JOIN books " +
+                            "ON fk_book_id = books.book_id " +
+                            "WHERE fk_user_id = '" + user.getLogin()
+            )) {
+
+            } catch (SQLException e) {
+
+            }
+        } catch (SQLException e) {
+
+        }
+        return null;
     }
     private void checkOrCreateTable(String tableName, String[] columns) {
         try(Statement statement = conn.createStatement()) {

@@ -46,7 +46,6 @@ public class LoginMenuController {
         }
         DataBaseController dataBaseController = new DataBaseController();
         User user = dataBaseController.findUser(login, password);
-        writeUser(user);
         if (user == null) {
             loginField.setText("");
             passwordField.setText("");
@@ -60,25 +59,28 @@ public class LoginMenuController {
             */
             return;
         }
+        writeUser(user);
         setScene("/MainMenu.fxml", e);
     }
 
     private void writeUser(User user) {
         try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("/user_info.txt"),
+                new FileOutputStream("src/main/resources/user_info.txt"),
                 StandardCharsets.UTF_8
         ))) {
-            String[] userDates = new String[]{
-                    user.getLogin(), user.getPassword(), user.getName(), user.getSurname()
-            };
-            for (String userDate : userDates) {
-                writer.write(userDate);
-            }
+            writeUserField(writer, "login", user.getLogin());
+            writeUserField(writer,"password", user.getPassword());
+            writeUserField(writer, "name", user.getName());
+            writeUserField(writer, "surname", user.getSurname());
         } catch (IOException e) {
             System.out.println("problem with opening file: " + e.getMessage());
             throw new RuntimeException(e);
         }
+    }
 
+    private void writeUserField(BufferedWriter writer, String fieldName, String fieldValue) throws IOException{
+        writer.write(fieldName + " : " + fieldValue);
+        writer.newLine();
     }
     public void register(ActionEvent e) throws IOException {
         setScene("/RegisterMenu.fxml", e);

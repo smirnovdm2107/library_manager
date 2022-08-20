@@ -18,7 +18,23 @@ public class UserLoader {
         return user;
     }
     private static class Parser extends BaseParser {
+        private static class Pair<T, K> {
+            final T first;
+            final K second;
+            public Pair(T first, K second) {
+                this.first = first;
+                this.second = second;
+            }
 
+
+            public T getFirst() {
+                return first;
+            }
+
+            public K getSecond() {
+                return second;
+            }
+        }
         public Parser(CharSource source) throws IOException{
             super(source);
         }
@@ -27,27 +43,49 @@ public class UserLoader {
             String password = parseField("password");
             String name = parseField("name");
             String surname = parseField("surname");
-            return new User(name, surname, login, password);
+            return new User(login, password, name, surname);
         }
 
         private String nextWord() throws IOException{
+            skipWhitespaces();
             StringBuilder sb = new StringBuilder();
             while(!isWhitespace()) {
                 sb.append(take());
             }
-            return sb.toString();
+            String result = sb.toString();
+            return result.isEmpty() ? null : result;
         }
 
+        private Pair<String, String> parseField() throws IOException {
+            String first = nextWord();
+            expectFieldSeparator();
+            String second = nextWord();
+            skipLineSeparator();
+            return new Pair<>(first, second);
+        }
         private String parseField(String field) throws IOException {
             expect(field);
+            expectFieldSeparator();
+            String result = nextWord();
+            skipLineSeparator();
+            return result;
+        }
+
+        private void expectFieldSeparator() throws IOException {
             expect(Character::isWhitespace);
             expect(':');
             expect(Character::isWhitespace);
-            return nextWord();
         }
         private void expect(Predicate<Character> predicate) throws IOException {
             if (!take(predicate)) {
                 throw new SyntaxException("unexpected char on " + getPos());
+            }
+        }
+
+
+        private void skipLineSeparator() throws IOException {
+            while(take('\n') || take('\r')) {
+                //...do nothing
             }
         }
     }

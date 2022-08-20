@@ -28,4 +28,10 @@ public class User {
     public String getPassword() {
         return userDates.get("password");
     }
+
+    public Map<String, String> getFields() {
+        Map<String, String> resultMap = new HashMap<>();
+        userDates.forEach(resultMap::put);
+        return resultMap;
+    }
 }

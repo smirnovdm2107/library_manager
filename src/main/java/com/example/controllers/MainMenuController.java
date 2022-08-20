@@ -47,7 +47,7 @@ public class MainMenuController {
         stage.setScene(scene);
 
         AccountMenuController controller = loader.getController();
-        controller.setUser((new UserLoader("/user_info.txt").getUser()));
+        controller.setUser((new UserLoader("src/main/resources/user_info.txt").getUser()));
         stage.show();
     }
 
