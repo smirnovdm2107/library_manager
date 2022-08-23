@@ -1,6 +1,6 @@
 package com.example.controllers;
 
-import com.example.db.DataBaseController;
+import com.example.db.DBController;
 import com.example.user.UserLoader;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -24,7 +24,7 @@ public class MainMenuController {
 
     public void searchBookOrAuthor(ActionEvent e) {
         String requestString = bookSearchField.getText();
-        DataBaseController dataBaseController = DataBaseController.getInstance();
+        DBController dataBaseController = new DBController();
         List<String> results = dataBaseController.getBooksAndAuthors();
         results.sort((s1, s2) -> {
             int res1 = findLevenshteinDistance(requestString, s1);

@@ -1,7 +1,7 @@
 package com.example.controllers;
 
 import com.example.user.User;
-import com.example.db.DataBaseController;
+import com.example.db.DBController;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -51,7 +51,7 @@ public class RegisterMenuController {
             return;
         }
         User user = new User(login, password, name, surname);
-        DataBaseController dataBaseController = DataBaseController.getInstance();
+        DBController dataBaseController = new DBController();
         dataBaseController.addUser(user);
         if (logInCheckBox.isSelected()) {
             switchScene("/MainMenu.fxml", e);

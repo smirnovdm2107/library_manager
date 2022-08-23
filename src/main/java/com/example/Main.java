@@ -1,11 +1,7 @@
 package com.example;
 
-import com.example.db.DataBaseController;
+import com.example.db.DBController;
 import javafx.application.Application;
-import javafx.beans.Observable;
-import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class Main extends Application {
     public static void main(String[] args) {
@@ -22,7 +17,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        DataBaseController.checkDataBase();
+        DBController.checkDataBase();
         stage.setOnCloseRequest(windowEvent -> {
             windowEvent.consume();
             showCloseAlert(stage);

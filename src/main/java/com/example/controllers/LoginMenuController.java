@@ -1,7 +1,7 @@
 package com.example.controllers;
 
 import com.example.user.User;
-import com.example.db.DataBaseController;
+import com.example.db.DBController;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -44,7 +44,7 @@ public class LoginMenuController {
             }
             return;
         }
-        DataBaseController dataBaseController = DataBaseController.getInstance();
+        DBController dataBaseController = new DBController();
         User user = dataBaseController.findUser(login, password);
         if (user == null) {
             loginField.setText("");
