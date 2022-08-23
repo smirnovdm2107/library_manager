@@ -44,7 +44,7 @@ public class LoginMenuController {
             }
             return;
         }
-        DataBaseController dataBaseController = new DataBaseController();
+        DataBaseController dataBaseController = DataBaseController.getInstance();
         User user = dataBaseController.findUser(login, password);
         if (user == null) {
             loginField.setText("");

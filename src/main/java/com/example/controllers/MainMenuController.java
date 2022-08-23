@@ -24,7 +24,7 @@ public class MainMenuController {
 
     public void searchBookOrAuthor(ActionEvent e) {
         String requestString = bookSearchField.getText();
-        DataBaseController dataBaseController = new DataBaseController();
+        DataBaseController dataBaseController = DataBaseController.getInstance();
         List<String> results = dataBaseController.getBooksAndAuthors();
         results.sort((s1, s2) -> {
             int res1 = findLevenshteinDistance(requestString, s1);

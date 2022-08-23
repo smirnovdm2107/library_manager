@@ -13,9 +13,11 @@ public class DataBaseController {
     private final static String password = "";
     private final static String user = "postgres";
 
+    private static DataBaseController dataBaseController;
+
     private final Connection conn;
 
-    public DataBaseController() {
+    private DataBaseController() {
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -35,7 +37,6 @@ public class DataBaseController {
             throw new RuntimeException(e);
         }
     }
-
     public List<String> getBooksAndAuthors() {
         List<String> results = new ArrayList<>();
         try(Statement statement = conn.createStatement()) {
@@ -173,7 +174,7 @@ public class DataBaseController {
                             "ON fk_user_id = users.user_id " +
                             "LEFT JOIN books " +
                             "ON fk_book_id = books.book_id " +
-                            "WHERE fk_user_id = '" + user.getLogin()
+                            "WHERE users.login = " + user.getLogin()
             )) {
 
             } catch (SQLException e) {
@@ -201,6 +202,13 @@ public class DataBaseController {
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public static DataBaseController getInstance() {
+        if (dataBaseController == null) {
+            dataBaseController = new DataBaseController();
+        }
+        return dataBaseController;
     }
 
 }

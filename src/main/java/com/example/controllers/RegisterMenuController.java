@@ -51,7 +51,7 @@ public class RegisterMenuController {
             return;
         }
         User user = new User(login, password, name, surname);
-        DataBaseController dataBaseController = new DataBaseController();
+        DataBaseController dataBaseController = DataBaseController.getInstance();
         dataBaseController.addUser(user);
         if (logInCheckBox.isSelected()) {
             switchScene("/MainMenu.fxml", e);
