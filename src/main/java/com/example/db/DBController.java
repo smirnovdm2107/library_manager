@@ -120,17 +120,73 @@ public class DBController {
                     false
                     )
         );
-        /// Нужно ещё дописать вторую часть, где это всё станет одной транзакцией
-        // и соответственно уменьшится количество книг
+        removeBook
+
     }
 
-    public Book findBook(String title, String author) {
+    public void removeBook(Book book) {
+        Objects.requireNonNull(book);
+        defineBook(book);
+        executeUpdate(String.format(
+                "UPDATE books SET amount = amount - 1 WHERE books.book_id = '%d'", book.getBookId()
+        ));
+    }
+
+    public void addBook(Book book) {
+        Objects.requireNonNull(book);
+        executeUpdate(String.format(
+                "IF EXISTS (SELECT book_id FROM books WHERE book_id = '%d') THEN " +
+                        "UPDATE books SET amount = amount + 1; " +
+                        "ELSE " +
+                        "INSERT INTO books ( title, author_id, annotation, amount) VALUES (%s, %s, %s, %d)",
+                book.getBookId(), book.getTitle(), book.getAnnotation(), 1
+                )
+        );
+    }
+
+    private void defineBook(Book book) {
+        Objects.requireNonNull(book);
+        book.setBookId(findBookId(book));
+    }
+    private int findBookId(Book book) {
+        if (!book.isDefined()) {
+            return findBook(book).getBookId();
+        }
+        return book.getBookId();
+    }
+
+    public Book findBook(Book book) {
+        Objects.requireNonNull(book);
+        return findBook(book.getTitle(), book.getAuthorId());
+    }
+
+    public Author findAuthor(String name, String surname) {
+        Author author = null;
+        try(ResultSet resultSet = executeQuery(
+                String.format("SELECT * FROM authors " +
+                        "WHERE authors.name = '%s' AND authors.surname = '%s';", name, surname))) {
+            if (resultSet.next()) {
+                author = new Author(
+                        resultSet.getInt("author_id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("surname"),
+                        resultSet.getString("description")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return author;
+    }
+
+    public Book findBook(String title, int authorId) {
         Book book = null;
         try(ResultSet resultSet = executeQuery(
                 String.format(
                         "SELECT * FROM books " +
-                                "WHERE books.title = '%s' AND books.author = '%s",
-                        title, author
+                                "WHERE books.title = '%s' AND books.author_id = '%d",
+                        title, authorId
 
                 )
         )) {

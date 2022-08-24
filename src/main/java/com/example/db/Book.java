@@ -5,7 +5,7 @@ public class Book {
     private String title;
     private int authorId;
     private String annotation;
-    private int amount;
+    private int amount = 1;
 
     public Book(String title, int authorId, String annotation, int amount) {
         this.title = title;
