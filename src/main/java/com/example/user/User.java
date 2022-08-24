@@ -5,33 +5,66 @@ import java.util.Map;
 import java.util.Objects;
 
 public class User {
-    private Map<String, String> userDates = new HashMap<>();
+
+    int userId = 0;
+    String login;
+    String password;
+    String name;
+    String surname;
+
+    public User(int userId, String login, String password, String name, String surname) {
+        this(login, password, name, surname);
+        this.userId = userId;
+    }
+
     public User(String login, String password, String name, String surname) {
-        userDates.put("login", login);
-        userDates.put("password", password);
-        userDates.put("name", name);
-        userDates.put("surname", surname);
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
     }
 
-    public String getName() {
-        return userDates.get("name");
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public String getSurname() {
-        return userDates.get("surname");
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getLogin() {
-        return userDates.get("login");
+        return login;
     }
 
     public String getPassword() {
-        return userDates.get("password");
+        return password;
     }
 
-    public Map<String, String> getFields() {
-        Map<String, String> resultMap = new HashMap<>();
-        userDates.forEach(resultMap::put);
-        return resultMap;
+    public String getName() {
+        return name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public boolean isDefined()  {
+        return userId != 0;
     }
 }

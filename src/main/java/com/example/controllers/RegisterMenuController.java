@@ -54,9 +54,9 @@ public class RegisterMenuController {
         DBController dataBaseController = new DBController();
         dataBaseController.addUser(user);
         if (logInCheckBox.isSelected()) {
-            switchScene("/MainMenu.fxml", e);
+            SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
         }
-        switchScene("/LoginMenu.fxml", e);
+        SceneSwitcher.getInstance().switchScene("/LoginMenu.fxml", e);
     }
 
     private boolean checkEmpty(TextField textField, String text) {
@@ -68,15 +68,7 @@ public class RegisterMenuController {
     }
 
     public void switchToLoginMenu(MouseEvent e) throws IOException {
-        switchScene("/LoginMenu.fxml", e);
-    }
-    private void switchScene(String path, Event e) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-        root = loader.load();
-        stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+        SceneSwitcher.getInstance().switchScene("/LoginMenu.fxml", e);
     }
 
 }

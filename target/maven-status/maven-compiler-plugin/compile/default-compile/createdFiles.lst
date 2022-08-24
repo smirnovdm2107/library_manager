@@ -1,7 +1,7 @@
 com/example/user/User.class
 com/example/controllers/BookPageController.class
+com/example/db/Book.class
 com/example/controllers/MainMenuController.class
-com/example/db/DataBaseController.class
 com/example/user/SyntaxException.class
 com/example/user/UserLoader$Parser$Pair.class
 com/example/user/CharSource.class
@@ -9,8 +9,11 @@ com/example/user/UserLoader$Parser.class
 com/example/user/UserOrder.class
 com/example/Main.class
 com/example/user/UserLoader.class
+com/example/db/Order.class
 com/example/controllers/RegisterMenuController.class
 com/example/controllers/AccountMenuController.class
+com/example/controllers/SceneSwitcher.class
 com/example/user/BaseParser.class
 com/example/controllers/LoginMenuController.class
+com/example/db/DBController.class
 com/example/user/InputStreamCharSource.class

@@ -9,7 +9,7 @@
    <children>
       <Label fx:id="nameLabel" layoutX="21.0" layoutY="34.0" text="This is your account, USERNAME" />
       <Button layoutX="27.0" layoutY="341.0" mnemonicParsing="false" text="Settings" />
-      <Button layoutX="20.0" layoutY="183.0" mnemonicParsing="false" text="Take book" />
+      <Button fx:id="takeBookButton" layoutX="20.0" layoutY="183.0" mnemonicParsing="false" onAction="#takeBook" text="Take book" />
       <Button layoutX="14.0" layoutY="241.0" mnemonicParsing="false" text="Return book" />
       <Button fx:id="logOutButton" layoutX="495.0" layoutY="341.0" mnemonicParsing="false" onAction="#logOut" text="Log out" />
       <ListView layoutX="190.0" layoutY="83.0" prefHeight="227.0" prefWidth="347.0" />

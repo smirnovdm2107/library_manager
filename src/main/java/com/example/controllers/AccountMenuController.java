@@ -21,17 +21,11 @@ public class AccountMenuController {
         nameLabel.setText("This is your account, " + user.getName());
     }
 
-    public void setOrderList(User user) {
-        UserOrder[] userOrders =
+    public void takeBook(ActionEvent e) throws IOException {
+        SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
     }
-
     public void logOut(ActionEvent e) throws IOException {
-        Stage stage = (Stage)((Node) e.getSource()).getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/LoginMenu.fxml"));
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+       SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
     }
 
 }

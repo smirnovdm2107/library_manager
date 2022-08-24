@@ -60,7 +60,7 @@ public class LoginMenuController {
             return;
         }
         writeUser(user);
-        setScene("/MainMenu.fxml", e);
+        SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
     }
 
     private void writeUser(User user) {
@@ -83,7 +83,7 @@ public class LoginMenuController {
         writer.newLine();
     }
     public void register(ActionEvent e) throws IOException {
-        setScene("/RegisterMenu.fxml", e);
+        SceneSwitcher.getInstance().switchScene("/RegisterMenu.fxml", e);
     }
 
     private boolean checkEmptyFields(TextField... fields) {
@@ -99,14 +99,6 @@ public class LoginMenuController {
             }
         }
         return isValid;
-    }
-    private void setScene(String path, Event e) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
-        Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
     }
 
 }

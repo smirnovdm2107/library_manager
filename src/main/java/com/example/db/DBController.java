@@ -1,16 +1,15 @@
 package com.example.db;
 
 import com.example.user.User;
-import com.example.user.UserOrder;
+import org.hibernate.annotations.common.reflection.ReflectionUtil;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class DBController {
     private final static String LIBRARY_DB_PATH = "jdbc:postgresql://localhost:5432/library";
@@ -109,22 +108,80 @@ public class DBController {
         }
         return new Order[0];
     }
+    public void takeBook(User user, String title, String author) {
+        takeBook(user, findBook(title, author));
+    }
+    public void takeBook(User user, Book book) {
+        Objects.requireNonNull(book);
+        addOrder(new Order(
+                    user.getUserId(),
+                    book.getBookId(),
+                    new Timestamp(new java.util.Date().getTime()),
+                    false
+                    )
+        );
+        /// Нужно ещё дописать вторую часть, где это всё станет одной транзакцией
+        // и соответственно уменьшится количество книг
+    }
+
+    public Book findBook(String title, String author) {
+        Book book = null;
+        try(ResultSet resultSet = executeQuery(
+                String.format(
+                        "SELECT * FROM books " +
+                                "WHERE books.title = '%s' AND books.author = '%s",
+                        title, author
+
+                )
+        )) {
+            if (resultSet.next()) {
+                book = new Book(
+                        resultSet.getInt("book_id"),
+                        resultSet.getString("title"),
+                        resultSet.getInt("author_id"),
+                        resultSet.getString("annotation"),
+                        resultSet.getInt("amount")
+
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return book;
+    }
 
     public void addOrder(Order order) {
         Objects.requireNonNull(order);
         executeUpdate("INSERT INTO " + ORDER_TABLE_NAME +
                 " ( fk_user_id, fk_book_id, order_time, order_type) " +
-                "VALUES ( " );
+                "VALUES ( " + order.toString());
+    }
+    public int findUserId(User user) {
+        Objects.requireNonNull(user);
+        if (!user.isDefined()) {
+            return findUser(user).getUserId();
+        }
+        return user.getUserId();
     }
 
+    public void defineUser(User user) {
+        Objects.requireNonNull(user);
+        user.setUserId(findUserId(user));
+    }
+
+    public User findUser(User user) {
+        Objects.requireNonNull(user);
+        return findUser(user.getLogin(), user.getPassword());
+    }
     public User findUser(String login, String password) {
         User resultUser = null;
-        try (Statement statement = conn.createStatement()) {
-            ResultSet resultSet = statement.executeQuery(
-                    String.format("SELECT * FROM users " +
-                            "WHERE users.login='%s' AND users.password='%s';", login, password));
+        try (ResultSet resultSet = executeQuery(
+                String.format("SELECT * FROM users " +
+                        "WHERE users.login='%s' AND users.password='%s';", login, password))){
             if (resultSet.next()) {
                 resultUser = new User(
+                        resultSet.getInt("user_id"),
                         resultSet.getString("login"),
                         resultSet.getString("password"),
                         resultSet.getString("name"),
@@ -169,7 +226,8 @@ public class DBController {
                                 "book_id SERIAL PRIMARY KEY, " +
                                 "title varchar(128) NOT NULL, " +
                                 "fk_author_id INT, " +
-                                "annotation text," +
+                                "annotation text, " +
+                                "amount INT, " +
                                 "FOREIGN KEY(fk_author_id) REFERENCES authors(author_id)" +
                                 ");",
 
@@ -205,8 +263,23 @@ public class DBController {
             throw new RuntimeException(e);
         }
     }
-    private static void executeQuery
 
+        private ResultSet executeQuery(String query) {
+            return executeQuery(new String[]{query})[0];
+        }
+        private ResultSet[] executeQuery(String... queries) {
+            int answerCount = queries.length;
+            ResultSet[] resultSets = new ResultSet[answerCount];
+            try(Statement statement = conn.createStatement()) {
+                for (int i = 0; i < answerCount; i++) {
+                    resultSets[i] = statement.executeQuery(queries[i]);
+                }
+            } catch (SQLException e) {
+                System.out.print(e.getMessage());
+                throw new RuntimeException(e);
+            }
+            return resultSets;
+        }
     public void close() {
         try {
             conn.close();
