@@ -28,4 +28,7 @@ public class AccountMenuController {
        SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
     }
 
+    public void returnBook(ActionEvent e) {
+
+    }
 }

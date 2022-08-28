@@ -1,9 +1,6 @@
 package com.example.db;
 
 import com.example.user.User;
-import org.hibernate.annotations.common.reflection.ReflectionUtil;
-
-import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,22 +105,56 @@ public class DBController {
         }
         return new Order[0];
     }
-    public void takeBook(User user, String title, String author) {
-        takeBook(user, findBook(title, author));
+
+    public void takeBook(User user, String title, int author_id) {
+        takeBook(user, findBook(title, author_id));
     }
+
     public void takeBook(User user, Book book) {
-        Objects.requireNonNull(book);
-        addOrder(new Order(
-                    user.getUserId(),
-                    book.getBookId(),
-                    new Timestamp(new java.util.Date().getTime()),
-                    false
-                    )
-        );
-        removeBook
-
+        bookOperation(user, book, false);
     }
 
+    public void giveBook(User user, Book book) {
+        bookOperation(user, book, true);
+    }
+
+
+    public void bookOperation(User user, Book book, boolean orderType) {
+        Objects.requireNonNull(book, "book can't be null");
+        Objects.requireNonNull(user, "user can't be null");
+        try {
+            try {
+                conn.setAutoCommit(false);
+                defineUser(user);
+                defineBook(book);
+                addOrder(new Order(
+                                user.getUserId(),
+                                book.getBookId(),
+                                new Timestamp(new java.util.Date().getTime()),
+                                false
+                        )
+                );
+                bookOperation(book, orderType);
+            } catch (SQLException e) {
+                conn.rollback();
+                System.out.println(e.getMessage());
+                throw new RuntimeException(e);
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void bookOperation(Book book, boolean orderType) {
+        if (orderType) {
+            addBook(book);
+        } else {
+            removeBook(book);
+        }
+    }
     public void removeBook(Book book) {
         Objects.requireNonNull(book);
         defineBook(book);
@@ -135,11 +166,11 @@ public class DBController {
     public void addBook(Book book) {
         Objects.requireNonNull(book);
         executeUpdate(String.format(
-                "IF EXISTS (SELECT book_id FROM books WHERE book_id = '%d') THEN " +
-                        "UPDATE books SET amount = amount + 1; " +
-                        "ELSE " +
-                        "INSERT INTO books ( title, author_id, annotation, amount) VALUES (%s, %s, %s, %d)",
-                book.getBookId(), book.getTitle(), book.getAnnotation(), 1
+                        "IF EXISTS (SELECT book_id FROM books WHERE book_id = '%d') THEN " +
+                                "UPDATE books SET amount = amount + 1; " +
+                                "ELSE " +
+                                "INSERT INTO books ( title, author_id, annotation, amount) VALUES (%s, %s, %s, %d)",
+                        book.getBookId(), book.getTitle(), book.getAnnotation(), 1
                 )
         );
     }
@@ -148,6 +179,7 @@ public class DBController {
         Objects.requireNonNull(book);
         book.setBookId(findBookId(book));
     }
+
     private int findBookId(Book book) {
         if (!book.isDefined()) {
             return findBook(book).getBookId();
@@ -162,7 +194,7 @@ public class DBController {
 
     public Author findAuthor(String name, String surname) {
         Author author = null;
-        try(ResultSet resultSet = executeQuery(
+        try (ResultSet resultSet = executeQuery(
                 String.format("SELECT * FROM authors " +
                         "WHERE authors.name = '%s' AND authors.surname = '%s';", name, surname))) {
             if (resultSet.next()) {
@@ -182,7 +214,7 @@ public class DBController {
 
     public Book findBook(String title, int authorId) {
         Book book = null;
-        try(ResultSet resultSet = executeQuery(
+        try (ResultSet resultSet = executeQuery(
                 String.format(
                         "SELECT * FROM books " +
                                 "WHERE books.title = '%s' AND books.author_id = '%d",
@@ -213,6 +245,7 @@ public class DBController {
                 " ( fk_user_id, fk_book_id, order_time, order_type) " +
                 "VALUES ( " + order.toString());
     }
+
     public int findUserId(User user) {
         Objects.requireNonNull(user);
         if (!user.isDefined()) {
@@ -230,11 +263,12 @@ public class DBController {
         Objects.requireNonNull(user);
         return findUser(user.getLogin(), user.getPassword());
     }
+
     public User findUser(String login, String password) {
         User resultUser = null;
         try (ResultSet resultSet = executeQuery(
                 String.format("SELECT * FROM users " +
-                        "WHERE users.login='%s' AND users.password='%s';", login, password))){
+                        "WHERE users.login='%s' AND users.password='%s';", login, password))) {
             if (resultSet.next()) {
                 resultUser = new User(
                         resultSet.getInt("user_id"),
@@ -320,22 +354,24 @@ public class DBController {
         }
     }
 
-        private ResultSet executeQuery(String query) {
-            return executeQuery(new String[]{query})[0];
-        }
-        private ResultSet[] executeQuery(String... queries) {
-            int answerCount = queries.length;
-            ResultSet[] resultSets = new ResultSet[answerCount];
-            try(Statement statement = conn.createStatement()) {
-                for (int i = 0; i < answerCount; i++) {
-                    resultSets[i] = statement.executeQuery(queries[i]);
-                }
-            } catch (SQLException e) {
-                System.out.print(e.getMessage());
-                throw new RuntimeException(e);
+    private ResultSet executeQuery(String query) {
+        return executeQuery(new String[]{query})[0];
+    }
+
+    private ResultSet[] executeQuery(String... queries) {
+        int answerCount = queries.length;
+        ResultSet[] resultSets = new ResultSet[answerCount];
+        try (Statement statement = conn.createStatement()) {
+            for (int i = 0; i < answerCount; i++) {
+                resultSets[i] = statement.executeQuery(queries[i]);
             }
-            return resultSets;
+        } catch (SQLException e) {
+            System.out.print(e.getMessage());
+            throw new RuntimeException(e);
         }
+        return resultSets;
+    }
+
     public void close() {
         try {
             conn.close();
