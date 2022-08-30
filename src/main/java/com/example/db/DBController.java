@@ -5,8 +5,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Function;
 
 public class DBController {
     private final static String LIBRARY_DB_PATH = "jdbc:postgresql://localhost:5432/library";
@@ -98,12 +96,67 @@ public class DBController {
 
     public Order[] getUserOrders(User user) {
         Objects.requireNonNull(user);
-        try (Statement statement = conn.createStatement()) {
-
+        List<Order> orders = new ArrayList<>();
+        try (Statement statement = conn.createStatement();
+            ResultSet resultSet = executeQuery(statement,
+                    String.format("SELECT * FORM orders " +
+                            "WHERE user_id = '%d';", user.getUserId()))) {
+            while(resultSet.next()) {
+                orders.add(new Order(
+                        // not safe, next time i will try to do it with hibernate
+                        resultSet.getInt(1),
+                        resultSet.getInt(2),
+                        resultSet.getInt(3),
+                        resultSet.getTimestamp(4),
+                        resultSet.getBoolean(5)
+                ));
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return new Order[0];
+        return orders.toArray(new Order[0]);
+    }
+
+    public Author getAuthor(String name, String surname) {
+        Author author = null;
+        try(Statement statement = conn.createStatement();
+            ResultSet resultSet = executeQuery(statement,
+                    String.format("SELECT * FROM authors " +
+                            "WHERE authors.name = '%s' AND authors.surname = '%s'", name, surname))) {
+             while(resultSet.next()) {
+                 author = new Author(
+                         resultSet.getInt(1),
+                         resultSet.getString(2),
+                         resultSet.getString(3),
+                         resultSet.getString(4)
+                 );
+             }
+         } catch (SQLException e) {
+             System.out.println(e.getMessage()); {
+                 throw new RuntimeException(e);
+             }
+         }
+        return author;
+    }
+
+    public Author[] getAuthors() {
+        List<Author> authors = new ArrayList<>();
+        try(Statement statement = conn.createStatement();
+            ResultSet resultSet = executeQuery(statement,
+                    "SELECT * FROM authors;")) {
+            while(resultSet.next()) {
+                authors.add(new Author(
+                   resultSet.getInt(1),
+                   resultSet.getString(2),
+                   resultSet.getString(3),
+                   resultSet.getString(4)
+                ));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e);
+        }
+        return authors.toArray(new Author[0]);
     }
 
     public void takeBook(User user, String title, int author_id) {
@@ -194,7 +247,8 @@ public class DBController {
 
     public Author findAuthor(String name, String surname) {
         Author author = null;
-        try (ResultSet resultSet = executeQuery(
+        try (Statement statement = conn.createStatement();
+                ResultSet resultSet = executeQuery(statement,
                 String.format("SELECT * FROM authors " +
                         "WHERE authors.name = '%s' AND authors.surname = '%s';", name, surname))) {
             if (resultSet.next()) {
@@ -214,7 +268,8 @@ public class DBController {
 
     public Book findBook(String title, int authorId) {
         Book book = null;
-        try (ResultSet resultSet = executeQuery(
+        try (Statement statement = conn.createStatement();
+                ResultSet resultSet = executeQuery(statement,
                 String.format(
                         "SELECT * FROM books " +
                                 "WHERE books.title = '%s' AND books.author_id = '%d",
@@ -266,7 +321,8 @@ public class DBController {
 
     public User findUser(String login, String password) {
         User resultUser = null;
-        try (ResultSet resultSet = executeQuery(
+        try (Statement statement = conn.createStatement();
+                ResultSet resultSet = executeQuery(statement,
                 String.format("SELECT * FROM users " +
                         "WHERE users.login='%s' AND users.password='%s';", login, password))) {
             if (resultSet.next()) {
@@ -354,14 +410,14 @@ public class DBController {
         }
     }
 
-    private ResultSet executeQuery(String query) {
-        return executeQuery(new String[]{query})[0];
+    private ResultSet executeQuery(Statement statement, String query) {
+        return executeQuery(statement, new String[]{query})[0];
     }
 
-    private ResultSet[] executeQuery(String... queries) {
+    private ResultSet[] executeQuery(Statement statement, String... queries) {
         int answerCount = queries.length;
         ResultSet[] resultSets = new ResultSet[answerCount];
-        try (Statement statement = conn.createStatement()) {
+        try {
             for (int i = 0; i < answerCount; i++) {
                 resultSets[i] = statement.executeQuery(queries[i]);
             }
