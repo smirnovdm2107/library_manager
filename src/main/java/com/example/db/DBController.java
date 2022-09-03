@@ -1,6 +1,8 @@
 package com.example.db;
 
 import com.example.user.User;
+
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,7 +150,7 @@ public class DBController {
         }
     }
 
-    public void bookOperation(Book book, boolean orderType) {
+    private void bookOperation(Book book, boolean orderType) {
         if (orderType) {
             addBook(book);
         } else {
@@ -194,7 +196,8 @@ public class DBController {
 
     public Author findAuthor(String name, String surname) {
         Author author = null;
-        try (ResultSet resultSet = executeQuery(
+        try (   Statement statement = conn.createStatement();
+                ResultSet resultSet = executeQuery(statement,
                 String.format("SELECT * FROM authors " +
                         "WHERE authors.name = '%s' AND authors.surname = '%s';", name, surname))) {
             if (resultSet.next()) {
@@ -214,7 +217,8 @@ public class DBController {
 
     public Book findBook(String title, int authorId) {
         Book book = null;
-        try (ResultSet resultSet = executeQuery(
+        try (Statement statement = conn.createStatement();
+                ResultSet resultSet = executeQuery(statement,
                 String.format(
                         "SELECT * FROM books " +
                                 "WHERE books.title = '%s' AND books.author_id = '%d",
@@ -266,7 +270,8 @@ public class DBController {
 
     public User findUser(String login, String password) {
         User resultUser = null;
-        try (ResultSet resultSet = executeQuery(
+        try (Statement statement = conn.createStatement();
+             ResultSet resultSet = executeQuery(statement,
                 String.format("SELECT * FROM users " +
                         "WHERE users.login='%s' AND users.password='%s';", login, password))) {
             if (resultSet.next()) {
@@ -354,14 +359,14 @@ public class DBController {
         }
     }
 
-    private ResultSet executeQuery(String query) {
-        return executeQuery(new String[]{query})[0];
+    private ResultSet executeQuery(Statement statement, String query) {
+        return executeQuery(statement, new String[]{query})[0];
     }
 
-    private ResultSet[] executeQuery(String... queries) {
+    private ResultSet[] executeQuery(Statement statement, String... queries) {
         int answerCount = queries.length;
         ResultSet[] resultSets = new ResultSet[answerCount];
-        try (Statement statement = conn.createStatement()) {
+        try {
             for (int i = 0; i < answerCount; i++) {
                 resultSets[i] = statement.executeQuery(queries[i]);
             }

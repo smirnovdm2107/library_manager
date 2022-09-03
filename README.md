@@ -8,3 +8,5 @@
 > you can have problems with javafx runtime components.
 > So try to load javafx library by hand or run with maven-javafx-plugin
 * Enjoy the simulation:)
+
+### Roadmap

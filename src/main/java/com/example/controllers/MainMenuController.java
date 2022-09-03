@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.*;
 
-public class MainMenuController {
+public class MainMenuController implements SceneController {
     @FXML
     TextField bookSearchField;
     @FXML

@@ -1,19 +1,12 @@
 package com.example.controllers;
 
 import com.example.user.User;
-import com.example.user.UserOrder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 
-public class AccountMenuController {
+public class AccountMenuController implements SceneController {
 
     @FXML
     Label nameLabel;
@@ -25,10 +18,9 @@ public class AccountMenuController {
         SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
     }
     public void logOut(ActionEvent e) throws IOException {
-       SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
+       SceneSwitcher.getInstance().switchScene("/LoginMenu.fxml", e);
     }
-
-    public void returnBook(ActionEvent e) {
-
+    public void returnBook(ActionEvent e) throws IOException {
+        SceneSwitcher.getInstance().switchScene("/ReturnBookPage", e);
     }
 }

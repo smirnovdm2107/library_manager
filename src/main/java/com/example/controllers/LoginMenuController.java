@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class LoginMenuController {
+public class LoginMenuController implements SceneController {
     @FXML
     private PasswordField passwordField;
     @FXML
@@ -34,14 +34,8 @@ public class LoginMenuController {
         String login = loginField.getText();
         String password = passwordField.getText();
         if (login.isEmpty() || password.isEmpty()) {
-            if (login.isEmpty()) {
-                loginField.setPromptText("Please enter login");
-                loginField.setOnMouseClicked(event -> loginField.setPromptText("Login"));
-            }
-            if (password.isEmpty()) {
-                passwordField.setPromptText("Please enter password");
-                passwordField.setOnMouseClicked(event -> passwordField.setPromptText("Password"));
-            }
+            setPromptTextIfEmpty(loginField, "Please enter login", "Login");
+            setPromptTextIfEmpty(passwordField, "Please enter password", "Password");
             return;
         }
         DBController dataBaseController = new DBController();
@@ -61,6 +55,12 @@ public class LoginMenuController {
         }
         writeUser(user);
         SceneSwitcher.getInstance().switchScene("/MainMenu.fxml", e);
+    }
+    private void setPromptTextIfEmpty(TextField textField, String promptText, String returnText) {
+        if (textField.getText().isEmpty()) {
+            textField.setPromptText("Please enter login");
+            textField.setOnMouseClicked(event -> textField.setPromptText(returnText));
+        }
     }
 
     private void writeUser(User user) {

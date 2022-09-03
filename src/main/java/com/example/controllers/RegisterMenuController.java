@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class RegisterMenuController {
+public class RegisterMenuController implements SceneController {
 
     @FXML
     TextField nameField;
